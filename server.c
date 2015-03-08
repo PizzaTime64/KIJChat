@@ -13,6 +13,15 @@ compile :  gcc server.c -o server -lpthread `mysql_config --cflags --libs`
 
 //thread function
 void *connection_handler(void *);
+void *broadcastonlineuser(void *);
+struct NODE {
+	int sock;
+	char username[1024];
+	struct NODE *next;
+};
+typedef struct NODE list;
+
+list *useronline;
 
 //spilt string
 int splitstr(char src[1024], char c, char dst[1024][1024]){
@@ -32,54 +41,110 @@ int splitstr(char src[1024], char c, char dst[1024][1024]){
 	}
 }
 
+void append_node(list **llist, int sock, char username[1024]) {
+	list *first = *llist;
+	if(*llist == NULL){
+		*llist = (list *)malloc(sizeof(list));
+		(*llist)->sock = sock;
+		strcpy((*llist)->username,username);
+		(*llist)->next = NULL;
+	}
+	else{
+		while(first->next != NULL)
+			first = first->next;
+		first->next = (list *)malloc(sizeof(list));
+		first->next->sock = sock;
+		strcpy(first->next->username,username);
+		first->next->next = NULL;
+	}
+}
+void delete_node(list **llist, int sock, char username[1024]) {
+	list *pointer = *llist;
+	list *temp;
+	temp = (list *)malloc(sizeof(list));
+	if(pointer->sock == sock){
+		temp = *llist;
+		*llist = (*llist)->next;
+		free(temp);
+		return;
+	}
+	while(pointer->next->sock != sock){
+		pointer = pointer->next;
+		if(pointer->next == NULL) return;
+	}
+	temp = pointer->next;
+	pointer->next = pointer->next->next;
+	free(temp);
+}
+int display(list **llist){
+	list *pointer = *llist;
+	if(pointer == NULL){
+		return 1;
+	}
+	while(pointer->next != NULL){
+		printf("%d ",pointer->sock);
+		pointer = pointer->next;
+	}
+	printf("%d ",pointer->sock);
+	return 0;
+}
+
 //print error mysql
-void finish_with_error(MYSQL *con)
-{
+void finish_with_error(MYSQL *con){
   fprintf(stderr, "%s\n", mysql_error(con));
   mysql_close(con);
   return;        
 }
 
-int main(int argc , char *argv[])
-{
+int main(int argc , char *argv[]){
 	int socket_desc , client_sock , c;
 	struct sockaddr_in server , client;
-//Create socket
+	useronline = NULL;
+	//Create socket
 	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
 	if (socket_desc == -1)
 	{
 		printf("Could not create socket");
 	}
 	puts("Socket created");
-//Prepare the sockaddr_in structure
+	
+	//Prepare the sockaddr_in structure
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons( 8888 );
-//Bind
+	
+	//Bind
 	int optval = 1;
 	setsockopt(socket_desc,SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
 	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
 	{
-//print the error message
+		//print the error message
 		perror("bind failed. Error");
 		return 1;
 	}
 	puts("bind done");
 	listen(socket_desc , 3);
-//Accept and incoming connection
+	
+	//Accept and incoming connection
 	puts("Waiting for incoming connections...");
 	c = sizeof(struct sockaddr_in);
 	pthread_t thread_id;
+
+	if( pthread_create( &thread_id , NULL , broadcastonlineuser , (void*) NULL ) < 0){
+		perror("could not create thread broadcastonlineuser");
+		return 1;
+	}
+	
 	while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
 	{
 		puts("Connection accepted");
 		if( pthread_create( &thread_id , NULL , connection_handler , (void*) &client_sock) < 0)
 		{
-			perror("could not create thread");
+			perror("could not create thread connection_handler");
 			return 1;
 		}
-//Now join the thread , so that we dont terminate before the thread
-//pthread_join( thread_id , NULL);
+		//Now join the thread , so that we dont terminate before the thread
+		//pthread_join( thread_id , NULL);
 		puts("Handler assigned");
 	}
 	if (client_sock < 0)
@@ -90,7 +155,90 @@ int main(int argc , char *argv[])
 	return 0;
 }
 
+void *broadcastonlineuser(void *temp){
+	char user[100][3][100];
+	MYSQL *con = mysql_init(NULL);
+	if (con == NULL) {
+		fprintf(stderr, "%s\n", mysql_error(con));
+		return;
+	}
+	//connection mysql db
+	if (mysql_real_connect(con, "localhost", "root", "root", "chatdb", 0, NULL, 0) == NULL) {
+		finish_with_error(con);
+	}
+	while(1){
+		sleep(3);
+		list *it;
+		list *hapus;
+		it = useronline;
 
+		//updating online user
+		while(1){
+			char queryselect[1024];
+			char lastseen[10][10];
+			char username[30];
+			int socketuser;
+
+			hapus = it;
+			socketuser = it->sock;
+			strcpy(username,it->username);
+			strcpy(queryselect,"select date_format(lastseen, '%e %c %Y %H %i %s') from user where username = '");
+			strcat(queryselect,username);
+			strcat(queryselect,"';");
+
+			MYSQL_RES *result = mysql_store_result(con);
+			if (result == NULL) finish_with_error(con);
+			MYSQL_ROW row;
+			row = mysql_fetch_row(result);
+			splitstr(row[0],' ',lastseen);
+
+			struct tm lsuser;
+			lsuser.tm_mday = atoi(lastseen[0])
+			lsuser.tm_mon = atoi(lastseen[1]) - 1;
+			lsuser.tm_year = atoi(lastseen[2]) - 1990;
+			lsuser.tm_hour = atoi(lastseen[3]);
+			lsuser.tm_min = atoi(lastseen[4]);
+			lsuser.tm_sec = atoi(lastseen[5]);
+
+			time_t lsusertime = mktime(lsuser);
+
+			time_t rawtime;
+			struct tm * now;
+			time(&rawtime);
+			now = localtime(&rawtime);
+			
+			double seconds = difftime(lsuser,now);
+
+			it = it->next;
+			if(seconds >= 5){
+				delete_node(&hapus,socketuser,username);
+			}
+
+			if(it->next == NULL) break;
+		}
+
+		//concate all online user
+		char listonlineuser[1024];
+		strcpy(listonlineuser,useronline->username);
+		it = useronline->next;
+		while(1){
+			strcat(listonlineuser,"\n");
+			strcat(listonlineuser,it->username);
+			if(it->next == NULL)break;
+			else it = it->next;
+		}
+		strcat(listonlineuser,"\n");
+
+		//broadcast
+		it = useronline;
+		while(1){
+
+
+			if(it->next == NULL)break;
+			else it = it->next;
+		}
+  	}
+}
 
 void *connection_handler(void *socket_desc){
 	//Get the socket descriptor
@@ -173,6 +321,7 @@ void *connection_handler(void *socket_desc){
 				//send "login ok"										^
 				//update seen user di db								^
 				//query db message yg tujuannya ke dia, kirim semua
+				//update list online user
 				//kirim list online user
 			//klo nggak ada												^
 				//send "login wrong"									^
@@ -207,6 +356,8 @@ void *connection_handler(void *socket_desc){
   				strcat(queryupdate,"';");
 
   				if ( mysql_query(con, queryupdate) ) finish_with_error(con);
+
+  				append_node(&useronline,sock,username);
   			}
   			else{
   				send(sock , "login wrong" , strlen("login wrong"),0);
@@ -219,11 +370,38 @@ void *connection_handler(void *socket_desc){
 		}
 		
 		else if(!strcmp(command,"message")){
-			//get from, to, id, body
-			//insert pesan ke db
-			//cek online user, klo online, dapetin socketnya, kirim pesan ke tujuan
-			//send "message ok"
-			send(sock , "message" , strlen("message"),0);
+			//get from, to, 										^
+			//insert pesan ke db									^
+			//send "message ok"										^
+			//cek online user, klo online, kirim pesan ke tujuan
+			
+			char from[20];
+			char to[20];
+			char id[15];
+			char queryinsert[1024];
+
+			strcpy(from,message[1]);
+			strcpy(to,message[2]);
+			strcpy(id,message[3]);
+
+			//create insert query syntax "Insert into message values('id','pengirim','peerima','body');"
+  			strcpy(queryinsert,"insert into user values('");
+  			strcat(queryinsert,id);
+  			strcat(queryinsert,"','");
+  			strcat(queryinsert,to);
+  			strcat(queryinsert,"','");
+  			strcat(queryinsert,client_message);
+  			strcat(queryinsert,"');");
+
+  			if ( mysql_query(con, queryinsert) ) finish_with_error(con);
+
+			send(sock , "message ok" , strlen("message ok"),0);
+
+			memset(from, 0, 2000);
+  			memset(to, 0, 2000);
+  			memset(id, 0, 2000);
+  			memset(queryinsert, 0, 2000);
+
 		}
 		else if(!strcmp(command,"ping")){
 			//update seen user di db
