@@ -12,13 +12,23 @@ typedef struct NODE list;
 
 void append_node(list **llist, int sock, char username[1024]) {
 	list *first = *llist;
-	while(first->next != NULL)
-	first = first->next;
-
-	first->next = (list *)malloc(sizeof(list));
-	first->next->sock = sock;
-	strcpy(first->next->username,username);
-	first->next->next = NULL;
+	
+	if(*llist == NULL){
+		*llist = (list *)malloc(sizeof(list));
+		(*llist)->sock = sock;
+		strcpy((*llist)->username,username);
+	 	(*llist)->next = NULL;
+	}
+	else{
+		while(first->next != NULL)
+		first = first->next;
+	
+		first->next = (list *)malloc(sizeof(list));
+		first->next->sock = sock;
+		strcpy(first->next->username,username);
+		first->next->next = NULL;
+	}
+	
 }
 
 void delete_node(list **llist, int sock, char username[1024]) {
@@ -42,20 +52,17 @@ void delete_node(list **llist, int sock, char username[1024]) {
 	
 }
 
-void display(list **llist){
+int display(list **llist){
 	list *pointer = *llist;
+	if(pointer == NULL){
+		return 1;
+	}
 	while(pointer->next != NULL){
 		printf("%d ",pointer->sock);
 		pointer = pointer->next;
 	}
 	printf("%d ",pointer->sock);
-}
-
-void newlist(list ** llist){
-	*llist = (list *)malloc(sizeof(list));
-	(*llist)->sock = 0;
-	strcpy((*llist)->username,"");
- 	(*llist)->next = NULL;
+	return 0;
 }
 
 int split(char c, char dst[1024][1024], char src[1024]){
@@ -77,12 +84,16 @@ int split(char c, char dst[1024][1024], char src[1024]){
 
 int main(){
 	list *llist;
-	newlist(&llist); 	
+	llist = NULL;
+	//newlist(&llist); 	
  	append_node(&llist,1,"aaa");
  	append_node(&llist,2,"aaa");
  	append_node(&llist,3,"aaa");
  	delete_node(&llist,3,"aaa");
 	append_node(&llist,4,"aaa");
+	delete_node(&llist,1,"aaa");
+	delete_node(&llist,2,"aaa");
+	delete_node(&llist,4,"aaa");
 	display(&llist);
 	printf("\n");
 	
