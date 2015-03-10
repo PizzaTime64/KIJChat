@@ -8,12 +8,13 @@ import java.util.*;
  * @hadrianbsrg
  */
 
-public class ChatClient extends javax.swing.JFrame {
-    String username, password, serverIP = "192.168.5.99";
+public class ChatClient extends javax.swing.JFrame  {
+    String username, password, serverIP = "192.168.1.111";
     int Port = 8888;
     Socket sock;
     BufferedReader reader;
     PrintWriter writer;
+    BufferedWriter writer2;
     ArrayList<String> userList = new ArrayList();
     Boolean isConnected = false;
 
@@ -28,7 +29,8 @@ public class ChatClient extends javax.swing.JFrame {
             
             String[] data;
             String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat", online = "online";
-            String message = "message";
+            String message = "message", okay = "ok";
+            
 
             try {
                 while ((stream = reader.readLine()) != null) {
@@ -44,7 +46,11 @@ public class ChatClient extends javax.swing.JFrame {
                      else if (data[0].equals(online)){
 
                         chatTextArea.removeAll();
-                        userAdd(data[0]);                     
+                        int counter = data.length;
+                        while (counter != 0){
+                            userAdd(data[counter]);  
+                            counter--;
+                        }                   
                      }
                      
                      else if (data[2].equals(disconnect)) {
@@ -57,16 +63,36 @@ public class ChatClient extends javax.swing.JFrame {
                         usersList.setText("");
                         writeUsers();
                         userList.clear();
-                    }                 
+                    }
+                     else if (data[1].equals(okay)){
+                         okayLogin();
+                     }
                 }
            }catch(Exception ex) {
            }
         }
     }
+    
+    public class KirimPing implements Runnable{
+       public void run(){
+        String pingText = "ping " + username;
+        writer.println(pingText);
+        writer.flush();
+        writer.flush();
+        writer.flush();
+       }
+    }
+    
+    
     //thread buat IncomingReader -> handler paket masuk
     public void ListenThread() {
          Thread IncomingReader = new Thread(new IncomingReader());
          IncomingReader.start();
+    }
+    
+    public void PingThread(){
+        Thread KirimPing = new Thread(new KirimPing());
+        KirimPing.start();
     }
 
     public void userAdd(String data) {
@@ -85,6 +111,24 @@ public class ChatClient extends javax.swing.JFrame {
              usersList.append(token + "\n");
          }
      }
+    
+    public void sendPing(){
+        while(true){
+        String pingText = "ping " + username;
+        writer.println(pingText);
+        writer.flush();
+        writer.flush();
+        writer.flush();
+        }
+    }
+        
+    
+    
+    public String okayLogin(){
+        String berhasil = "login ok";
+        return berhasil;
+    }
+    
     
     /* DISCONNECT FUNCTION */
     public void sendDisconnect() {
@@ -258,23 +302,27 @@ public class ChatClient extends javax.swing.JFrame {
             //password = passwordField.getText();
             usernameField.setEditable(false);
             //passwordField.setEditable(false);
-
             try {
                 sock = new Socket(serverIP, Port);
                 InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(streamreader);
                 writer = new PrintWriter(sock.getOutputStream());
-                writer.println("login " + username); //sends
+                String kirim = "login " + username;                
+                writer.println(kirim); //sends
                 writer.flush(); // flushes the buffer
-                if ((reader.readLine()).equals("login ok")){
-                      isConnected = true; // connected true                    
+                String responLogin = okayLogin();
+                if (responLogin.equals("login ok")){
+                      isConnected = true; // connected true
+                      chatTextArea.append("Connected!\n");
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 chatTextArea.append("Cannot Connect \n");
                 usernameField.setEditable(true);
                 //passwordField.setEditable(true);
             }
             ListenThread();
+            PingThread();
         } else if (isConnected == true) {
             chatTextArea.append("You are already connected. \n");
         }
@@ -293,7 +341,7 @@ public class ChatClient extends javax.swing.JFrame {
             inputTextArea.requestFocus();
         } else {
             try {
-               writer.println("message " + username + " " + to + " " + "id " + inputTextArea.getText() + "\0:"); //send to server
+               writer.println("message " + username + " " + to + " " + "id " + inputTextArea.getText() + "\0"); //send to server
                writer.flush(); // flushes the buffer
             } catch (Exception ex) {
                 chatTextArea.append("Message was not sent. \n");
