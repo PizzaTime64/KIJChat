@@ -1,0 +1,9 @@
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe.config
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.pdb
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.Form1.resources
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.Properties.Resources.resources
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csproj.GenerateResource.Cache
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.exe
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.pdb
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csprojResolveAssemblyReference.cache
