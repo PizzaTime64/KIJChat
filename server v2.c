@@ -74,24 +74,7 @@ void delete_node(list **llist, int sock, char username[1024]) {
 	pointer->next = pointer->next->next;
 	free(temp);
 }
-void listonlineuser(list **llist,char users[1024]){
-	list *it = *llist;
-	strcpy(users,useronline->username);
-	if(it == NULL){
-		strcpy(users,"NULL");
-		return;
-	}
 
-	it = useronline->next;
-
-	while(1){
-		strcat(users,"\n");
-		strcat(users,it->username);
-		if(it->next == NULL)break;
-		else it = it->next;
-	}
-	strcat(users,"\n");
-}
 
 int main(int argc , char *argv[]){
 	int socket_desc , client_sock , c;
@@ -204,11 +187,40 @@ void *connection_handler(void *socket_desc){
 		}
 		
 		else if(!strcmp(command,"message")){
-			
+			//cari ada username yang sama nggak.
+			char usertujuan[1001];
+			strcpy(usertujuan,message[2]);
+			int isFound = 0;
+
+			list *it = useronline;
+			while(1){
+				if(it==NULL) break;
+				if( !strcmp(it->username,usertujuan) ){
+					isFound = 1;
+					break;
+				}
+				it = it->next;
+			}
+			if(isFound){
+				send(it->sock,client_message,strlen(client_message),0);
+				send(sock, "message ok",strlen("message ok"),0);
+			}
+			else{
+				send(sock , "message Could not send message" , strlen("message Could not send message"),0);
+			}
 		}
 		else if(!strcmp(command,"ping")){
-			//update seen user di db
-			send(sock , "ping" , strlen("ping"),0);
+			char listonlineuser[10001];
+			strcpy(listonlineuser,"online\n");
+			ist *it = useronline;
+
+			while(1){
+				if(it==NULL) break;
+				strcat(listonlineuser,it->username);
+				strcat(listonlineuser,"\n");
+				it = it->next;
+			}
+			send(sock, listonlineuser,strlen(listonlineuser),0);
 		}
 		else{
 			send(sock , "unknown" , strlen("unknown"),0);
