@@ -56,7 +56,7 @@ void append_node(list **llist, int sock, char username[1024]) {
 		first->next->next = NULL;
 	}
 }
-void delete_node(list **llist, int sock, char username[1024]) {
+void delete_node(list **llist, int sock) {
 	list *pointer = *llist;
 	list *temp;
 	temp = (list *)malloc(sizeof(list));
@@ -142,7 +142,7 @@ void *connection_handler(void *socket_desc){
 	int sock = *(int*)socket_desc;
 	int read_size;
 	char client_message[2000];
-
+	printf("client : %s\n", client_message );
 	//Receive
 	while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 ){
 		//end of string
@@ -154,7 +154,7 @@ void *connection_handler(void *socket_desc){
 		char command[1024];
 		splitstr(client_message,' ',message);
 		strcpy(command,message[0]);
-
+		printf("client : %s\n", client_message );
 		////process command
 		if(!strcmp(command,"signup")){
 			char lala;
@@ -180,10 +180,12 @@ void *connection_handler(void *socket_desc){
 			if(isSama == 0){
 				append_node(&useronline,sock,username);
 				send(sock , "login ok" , strlen("login ok"),0);
+
 			}
 			else{
 				send(sock , "login failed, exsist username" , strlen("login failed, exsist username"),0);
 			}
+			printf("login ok");
 		}
 		
 		else if(!strcmp(command,"message")){
@@ -204,6 +206,7 @@ void *connection_handler(void *socket_desc){
 			if(isFound){
 				send(it->sock,client_message,strlen(client_message),0);
 				send(sock, "message ok",strlen("message ok"),0);
+
 			}
 			else{
 				send(sock , "message Could not send message" , strlen("message Could not send message"),0);
@@ -238,6 +241,7 @@ void *connection_handler(void *socket_desc){
 	{
 		//update seen user
 		puts("Client disconnected");
+		delete_node(&useronline,sock);
 		fflush(stdout);
 	}
 	else if(read_size == -1)
