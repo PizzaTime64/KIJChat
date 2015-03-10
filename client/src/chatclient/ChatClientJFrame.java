@@ -33,7 +33,7 @@ public class ChatClientJFrame extends javax.swing.JFrame {
         disconnectButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        onlineUsersArea = new javax.swing.JTextArea();
+        usersList = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         chatTextArea = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
@@ -69,9 +69,9 @@ public class ChatClientJFrame extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Online Users");
 
-        onlineUsersArea.setColumns(20);
-        onlineUsersArea.setRows(5);
-        jScrollPane1.setViewportView(onlineUsersArea);
+        usersList.setColumns(20);
+        usersList.setRows(5);
+        jScrollPane1.setViewportView(usersList);
 
         chatTextArea.setColumns(20);
         chatTextArea.setRows(5);
@@ -218,9 +218,9 @@ public class ChatClientJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea onlineUsersArea;
     private javax.swing.JTextField passwordField;
     private javax.swing.JButton sendButton;
     private javax.swing.JTextField usernameField;
+    private javax.swing.JTextArea usersList;
     // End of variables declaration//GEN-END:variables
 }
