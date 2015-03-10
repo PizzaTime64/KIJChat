@@ -4,6 +4,7 @@ package chatclient;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+
 /**
  * @hadrianbsrg
  */
@@ -14,7 +15,6 @@ public class ChatClient extends javax.swing.JFrame  {
     Socket sock;
     BufferedReader reader;
     PrintWriter writer;
-    BufferedWriter writer2;
     ArrayList<String> userList = new ArrayList();
     Boolean isConnected = false;
 
@@ -29,8 +29,7 @@ public class ChatClient extends javax.swing.JFrame  {
             
             String[] data;
             String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat", online = "online";
-            String message = "message", okay = "ok";
-            
+            String message = "message", okay = "ok";            
 
             try {
                 while ((stream = reader.readLine()) != null) {
@@ -41,31 +40,29 @@ public class ChatClient extends javax.swing.JFrame  {
 
                         chatTextArea.append(data[1] + ": " + data[4] + "\n");
                         chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
+                        KirimPing();
 
                     }
-                     else if (data[0].equals(online)){
-
-                        chatTextArea.removeAll();
-                        int counter = data.length;
-                        while (counter != 0){
-                            userAdd(data[counter]);  
-                            counter--;
-                        }                   
-                     }
                      
                      else if (data[2].equals(disconnect)) {
 
                         userRemove(data[0]);
 
                     } 
-                     else if (data[2].equals(done)) {
+                     else if (data[0].equals(online)) {
 
                         usersList.setText("");
+                        int counter = data.length;
+                        while (counter != 0){
+                            userAdd(data[counter]);  
+                            counter--;
+                        }
                         writeUsers();
                         userList.clear();
                     }
                      else if (data[1].equals(okay)){
                          okayLogin();
+                         KirimPing();
                      }
                 }
            }catch(Exception ex) {
@@ -73,15 +70,14 @@ public class ChatClient extends javax.swing.JFrame  {
         }
     }
     
-    public class KirimPing implements Runnable{
-       public void run(){
-        String pingText = "ping " + username;
+    public void KirimPing()
+    {
+        String pingText = "ping " + username + "\0";
         writer.println(pingText);
         writer.flush();
         writer.flush();
         writer.flush();
-       }
-    }
+   }
     
     
     //thread buat IncomingReader -> handler paket masuk
@@ -90,11 +86,6 @@ public class ChatClient extends javax.swing.JFrame  {
          IncomingReader.start();
     }
     
-    public void PingThread(){
-        Thread KirimPing = new Thread(new KirimPing());
-        KirimPing.start();
-    }
-
     public void userAdd(String data) {
          userList.add(data);
      }
@@ -204,13 +195,6 @@ public class ChatClient extends javax.swing.JFrame  {
                 usernameFieldActionPerformed(evt);
             }
         });
-        /*
-        passwordField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordFieldActionPerformed(evt);
-            }
-        });
-        */
 
         connectButton.setText("Connect");
         connectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -307,13 +291,14 @@ public class ChatClient extends javax.swing.JFrame  {
                 InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(streamreader);
                 writer = new PrintWriter(sock.getOutputStream());
-                String kirim = "login " + username;                
+                String kirim = "login " + username + "\0";                
                 writer.println(kirim); //sends
                 writer.flush(); // flushes the buffer
-                String responLogin = okayLogin();
+                String responLogin = reader.readLine();
                 if (responLogin.equals("login ok")){
                       isConnected = true; // connected true
                       chatTextArea.append("Connected!\n");
+                      KirimPing();
                 }
             }
             catch (Exception ex) {
@@ -322,7 +307,6 @@ public class ChatClient extends javax.swing.JFrame  {
                 //passwordField.setEditable(true);
             }
             ListenThread();
-            PingThread();
         } else if (isConnected == true) {
             chatTextArea.append("You are already connected. \n");
         }
@@ -341,8 +325,9 @@ public class ChatClient extends javax.swing.JFrame  {
             inputTextArea.requestFocus();
         } else {
             try {
-               writer.println("message " + username + " " + to + " " + "id " + inputTextArea.getText() + "\0"); //send to server
-               writer.flush(); // flushes the buffer
+              // writer.println("message " + username + " " + to + " " + "id " + inputTextArea.getText() + "\0"); //send to server
+                writer.println(inputTextArea.getText());
+                writer.flush(); // flushes the buffer
             } catch (Exception ex) {
                 chatTextArea.append("Message was not sent. \n");
             }
@@ -358,11 +343,6 @@ public class ChatClient extends javax.swing.JFrame  {
         // TODO add your handling code here:
     }       
     
-    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
-    }
-
-
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -381,7 +361,6 @@ public class ChatClient extends javax.swing.JFrame  {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton sendButton;
     private javax.swing.JTextField usernameField;
-  //private javax.swing.JTextField passwordField;
     private javax.swing.JTextArea usersList;              
 
 }
