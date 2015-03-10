@@ -211,13 +211,13 @@ void *connection_handler(void *socket_desc){
 		}
 		else if(!strcmp(command,"ping")){
 			char listonlineuser[10001];
-			strcpy(listonlineuser,"online\n");
+			strcpy(listonlineuser,"online ");
 			ist *it = useronline;
 
 			while(1){
 				if(it==NULL) break;
 				strcat(listonlineuser,it->username);
-				strcat(listonlineuser,"\n");
+				strcat(listonlineuser," ");
 				it = it->next;
 			}
 			send(sock, listonlineuser,strlen(listonlineuser),0);
