@@ -212,7 +212,7 @@ void *connection_handler(void *socket_desc){
 		else if(!strcmp(command,"ping")){
 			char listonlineuser[10001];
 			strcpy(listonlineuser,"online ");
-			ist *it = useronline;
+			list *it = useronline;
 
 			while(1){
 				if(it==NULL) break;
