@@ -4,3 +4,9 @@ c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\bin\Debug\rnd2.
 c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.exe
 c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.pdb
 c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.csprojResolveAssemblyReference.cache
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\bin\Debug\rnd2.exe.config
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\obj\Debug\rnd2.exe
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\obj\Debug\rnd2.pdb
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\bin\Debug\rnd2.exe
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\bin\Debug\rnd2.pdb
+C:\Users\Hadrian\Documents\GitHub\KIJChat\randomgenerator\rnd2\obj\Debug\rnd2.csprojResolveAssemblyReference.cache

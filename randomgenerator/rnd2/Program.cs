@@ -7,7 +7,7 @@ static class RandomUtil
     {
         string path = Path.GetRandomFileName();
         path = path.Replace(".", ""); // Remove period.
-        return path;
+        return path.Substring(0,8);
     }
 }
 class Program
