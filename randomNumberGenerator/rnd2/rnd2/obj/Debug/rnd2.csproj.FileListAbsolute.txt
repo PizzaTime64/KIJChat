@@ -1,0 +1,6 @@
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\bin\Debug\rnd2.exe.config
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\bin\Debug\rnd2.exe
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\bin\Debug\rnd2.pdb
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.exe
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.pdb
+c:\users\hadrian\documents\visual studio 2013\Projects\rnd2\rnd2\obj\Debug\rnd2.csprojResolveAssemblyReference.cache
