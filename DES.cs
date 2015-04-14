@@ -13,7 +13,7 @@ namespace DES
         {
             //Console.WriteLine(EncryptDES("sayasaya", "halohalo"));
 
-            string plaintext = "kebelet pipissssss";
+            string plaintext = "tes123";
             string iv = "aaaabbbb";
             string key = "bbbbaaaa";
 
