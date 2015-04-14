@@ -7,12 +7,20 @@ E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csproj.GenerateRes
 E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.exe
 E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.pdb
 E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csprojResolveAssemblyReference.cache
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\bin\Debug\KIJChat.exe.config
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.exe
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.pdb
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\bin\Debug\KIJChat.exe
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\bin\Debug\KIJChat.pdb
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.csprojResolveAssemblyReference.cache
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.Form1.resources
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.Properties.Resources.resources
-C:\Users\Hadrian\Documents\GitHub\KIJChat\client2\obj\Debug\KIJChat.csproj.GenerateResource.Cache
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe.manifest
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.application
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.exe.manifest
+E:\Semester 5\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.application
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe.config
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.exe
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.pdb
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe.manifest
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.application
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.exe
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\bin\Debug\KIJChat.pdb
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csprojResolveAssemblyReference.cache
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.Form1.resources
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.Properties.Resources.resources
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.csproj.GenerateResource.Cache
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.exe.manifest
+C:\OneDrive\KIJ\chat .net\KIJChat\KIJChat\obj\Debug\KIJChat.application
