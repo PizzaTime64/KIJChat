@@ -655,6 +655,7 @@ namespace KIJChat
             }
             return hasil;
         }
+
         public static BitArray hexToBit(string hex)
         {
             BitArray hasil = new BitArray(hex.Length * 4);

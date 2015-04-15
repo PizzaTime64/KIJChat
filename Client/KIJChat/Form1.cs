@@ -13,6 +13,7 @@ using System.IO;
 using KIJChat;
 using System.Collections;
 
+
 namespace KIJChat
 {
     public partial class Form1 : Form
@@ -37,7 +38,7 @@ namespace KIJChat
                 if (words[0] == "ServerAddress") ServerAddress = words[1];
                 if (words[0] == "ServerPort") ServerPort = words[1];
             }
-
+           
         }
 
         //buttton send
@@ -55,13 +56,15 @@ namespace KIJChat
             }
 
             string plaintext = txtInput.Text;
-            string iv = "samasama";//RandomUtil.GetRandomString();
+            string iv = RandomUtil.GetRandomString();
             string key = "bbbbaaaa";
             BitArray chiperbit = DES.ofbDES(DES.strToBit(iv), DES.strToBit(key), DES.strToBit(plaintext));
             string chipertext = DES.bitToHexa(chiperbit);
             //writeDisplay("chipertext = " + chipertext +".");
             string message = "message " + username.Trim() + " " + ((string)listOnlineUser.SelectedItem).Trim() + " chiper " + chipertext + " " + iv;
-            writeDisplay("pesan terenkripsi = " + message);
+            //writeDisplay("pesan terenkripsi = " + message);
+            Console.WriteLine("sebelum enkripsi = " + plaintext);
+            Console.WriteLine("sesudah enkripsi = " + chipertext);
             //message <usersumber> <usertujuan> <chiper/key> <chiper: chipertext vi; key: key>
             /*/message = txtInput.Text;
             
@@ -293,9 +296,8 @@ namespace KIJChat
                         string key = "bbbbaaaa";
                         BitArray plainbit = DES.ofbDES(DES.strToBit(iv), DES.strToBit(key), DES.hexToBit(command[4]));
                         string plaintext = DES.bitToStr(plainbit);
-                        writeDisplay("iv diterima = " + iv);
-                        writeDisplay("pesan diterima = " + data);
                         writeDisplay(" >> " + plaintext);
+                        //Console.WriteLine("nerima = ", data);
                     }
                 }
 
