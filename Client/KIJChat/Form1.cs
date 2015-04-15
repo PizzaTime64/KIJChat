@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using KIJChat;
+using System.Collections;
 
 namespace KIJChat
 {
@@ -23,6 +25,7 @@ namespace KIJChat
         Thread ctThread1 = null;
         string ServerAddress = null;
         string ServerPort = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -50,10 +53,18 @@ namespace KIJChat
                 Thread ctThread = new Thread(getMessage);
                 ctThread.Start();
             }
-            
-            string message = "message " + username.Trim() + " " + ((string)listOnlineUser.SelectedItem).Trim() + " " + txtInput.Text;
-            /*/message = txtInput.Text;
 
+            string plaintext = txtInput.Text;
+            string iv = "samasama";//RandomUtil.GetRandomString();
+            string key = "bbbbaaaa";
+            BitArray chiperbit = DES.ofbDES(DES.strToBit(iv), DES.strToBit(key), DES.strToBit(plaintext));
+            string chipertext = DES.bitToHexa(chiperbit);
+            //writeDisplay("chipertext = " + chipertext +".");
+            string message = "message " + username.Trim() + " " + ((string)listOnlineUser.SelectedItem).Trim() + " chiper " + chipertext + " " + iv;
+            writeDisplay("pesan terenkripsi = " + message);
+            //message <usersumber> <usertujuan> <chiper/key> <chiper: chipertext vi; key: key>
+            /*/message = txtInput.Text;
+            
             byte[] outStream = System.Text.Encoding.ASCII.GetBytes(txtInput.Text);
             serverStream.Write(outStream, 0, outStream.Length);
             serverStream.Flush();*/
@@ -76,7 +87,6 @@ namespace KIJChat
                     isConnected = true;
                 }
                 sendToServer("login " + txtUsernameLogin.Text.Trim() + " " + txtPasswordLogin.Text +"\0");
-                //sendToServer("message said lala siaidaid");
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -274,9 +284,19 @@ namespace KIJChat
                         writeDisplay(" >> " + command[0] + " " + command[1]);
                         continue;
                     }
-                    string output = string.Join(" ", command, 3, command.Length - 3);
-                    output = command[1] + ": " + output;
-                    writeDisplay(" >> " + output);
+                    //string output = string.Join(" ", command, 3, command.Length - 3);
+                    //output = command[1] + ": " + output;
+                    //writeDisplay(" >> " + output);
+                    if (command[3] == "chiper")
+                    {
+                        string iv = command[5];
+                        string key = "bbbbaaaa";
+                        BitArray plainbit = DES.ofbDES(DES.strToBit(iv), DES.strToBit(key), DES.hexToBit(command[4]));
+                        string plaintext = DES.bitToStr(plainbit);
+                        writeDisplay("iv diterima = " + iv);
+                        writeDisplay("pesan diterima = " + data);
+                        writeDisplay(" >> " + plaintext);
+                    }
                 }
 
             }
@@ -302,7 +322,7 @@ namespace KIJChat
         //buton disconnect
         private void btnDiscon_Click(object sender, EventArgs e) 
         {
-            clientSocket.Close();
+            if(isConnected == true)clientSocket.Close();
             rtxtDisplay.Text = "";
             txtUsernameLogin.Text = "";
             txtPasswordLogin.Text = "";
